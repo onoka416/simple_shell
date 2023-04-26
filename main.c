@@ -9,6 +9,7 @@
  *
  * Return: 0 on success and 1 when errors occur.
  **/
+
 int main(int argc, char **argv)
 {
     general_t *info;
