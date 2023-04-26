@@ -1,14 +1,14 @@
 #include "parser.h"
 #include "shell.h"
-/**
- * The main entry into my shell
- *
- * @argc:  arguments that are received in shell
- * @argv: arguments that are  received shell
- *
- * Returnig 0 on the success and 1 when errors occurs.
- **/
 
+/**
+ * main - The main entry into my shell.
+ *
+ * @argc: Arguments that are received in shell.
+ * @argv: Arguments that are received in shell.
+ *
+ * Return: 0 on success and 1 when errors occur.
+ **/
 int main(int argc, char **argv)
 {
     general_t *info;
@@ -35,4 +35,5 @@ int main(int argc, char **argv)
 
     return (status_code);
 }
+
 
