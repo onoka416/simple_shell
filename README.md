@@ -1,5 +1,5 @@
 <<<<<<< HEAD
-C - Simple Shell This project is a simple UNIX command interpreter written in C. The goal of this project is to create a functional shell program that mimics the basic functionality of the Bash shell.
+#C - Simple Shell This project is a simple UNIX command interpreter written in C. The goal of this project is to create a functional shell program that mimics the basic functionality of the Bash shell.
 
 Group Project This project is a group project and must be done in teams of two people. The project starts on April 12, 2023, at 6:00 AM and must end by April 27, 2023, at 6:00 AM. A checker will be released on April 26, 2023, at 1:12 AM, and an auto-review will be launched at the deadline.
 
