@@ -9,8 +9,6 @@
  */
 int main(int ac, char **av)
 {
-/* This function is the entry point for the shell. */
-
 	info_t info[] = { INFO_INIT };
 	int fd = 2;
 
@@ -18,10 +16,9 @@ int main(int ac, char **av)
 		"add $3, %0"
 		: "=r" (fd)
 		: "r" (fd));
- /* Check if there is only one argument. */
+
 	if (ac == 2)
 	{
-		/* Open the file specified in the argument. */
 		fd = open(av[1], O_RDONLY);
 		if (fd == -1)
 		{
@@ -36,16 +33,12 @@ int main(int ac, char **av)
 				_eputchar(BUF_FLUSH);
 				exit(127);
 			}
-			/* If there are more than one argument, print an error message and exit. */
 			return (EXIT_FAILURE);
 		}
 		info->readfd = fd;
 	}
-	  /* Populate the environment list. */
 	populate_env_list(info);
 	read_history(info);
-	/* Run the shell. */
-
 	hsh(info, av);
 	return (EXIT_SUCCESS);
 }
