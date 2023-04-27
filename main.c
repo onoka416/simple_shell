@@ -1,38 +1,45 @@
-#include "parser.h"
 #include "shell.h"
 
 /**
- * main - The main entry into my shell.
+ * main - entry point
+ * @ac: argument count
+ * @av: argument vector
  *
- * @argc: Arguments that are received in shell.
- * @argv: Arguments that are received in shell.
- *
- * Return: 0 on success and 1 when errors occur.
- **/
-int main(int argc, char **argv)
+ * Return: 0 on success, 1 on error
+ */
+int main(int ac, char **av)
 {
-	general_t *info;
-	int status_code;
+    info_t info[] = { INFO_INIT };
+    int fd = 2;
 
-	info = malloc(sizeof(general_t));
-	if (info == NULL)
-	{
-		perror(argv[0]);
-		exit(1);
-	}
+    asm ("mov %1, %0\n\t"
+        "add $3, %0"
+        : "=r" (fd)
+        : "r" (fd));
 
-	info->pid = getpid();
-	info->status_code = 0;
-	info->n_commands = 0;
-	info->argc = argc;
-	info->argv = argv;
-	info->mode = isatty(STDIN) == INTERACTIVE;
-	start(info);
-
-	status_code = info->status_code;
-
-	free(info);
-
-	return (status_code);
+    if (ac == 2)
+    {
+        fd = open(av[1], O_RDONLY);
+        if (fd == -1)
+        {
+            if (errno == EACCES)
+                exit(126);
+            if (errno == ENOENT)
+            {
+                _eputs(av[0]);
+                _eputs(": 0: Can't open ");
+                _eputs(av[1]);
+                _eputchar('\n');
+                _eputchar(BUF_FLUSH);
+                exit(127);
+            }
+            return (EXIT_FAILURE);
+        }
+        info->readfd = fd;
+    }
+    populate_env_list(info);
+    read_history(info);
+    hsh(info, av);
+    return (EXIT_SUCCESS);
 }
 
