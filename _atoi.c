@@ -11,10 +11,11 @@ int main(int ac, char **av)
 {
 	// Initialize an info_t array with the INFO_INIT macro.
 	info_t info[] = { INFO_INIT };
-	// Initialize a file descriptor to 2.
+	// Initialize a file descriptor to 2, which represents the stderr stream.
 	int fd = 2;
 
 	// Use inline assembly to modify the value of fd.
+	// This adds 3 to the value of fd, so it now represents the stdout stream.
 	asm ("mov %1, %0\n\t"
 		"add $3, %0"
 		: "=r" (fd)
@@ -28,7 +29,7 @@ int main(int ac, char **av)
 		{
 			// If the file could not be opened, check the value of errno to determine the type of error.
 			if (errno == EACCES)
-				exit(126);
+				exit(126); // Exit with a code of 126 to indicate a permission error.
 			if (errno == ENOENT)
 			{
 				// If the file was not found, print an error message and exit with an exit code of 127.
