@@ -1,7 +1,7 @@
 #include "shell.h"
 
 /**
- *the function the:wq _strcpy - copies a string
+ * _strcpy - copies a string
  * @dest: the destination
  * @src: the source
  *
