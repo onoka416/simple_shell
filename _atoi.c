@@ -1,86 +1,58 @@
 #include "shell.h"
 
 /**
- * interactive - Returns true if the shell is in interactive mode.
- * @info: A pointer to the struct containing information about the shell.
+ * main - The entry point of the program.
+ * @ac: The number of arguments passed to the program.
+ * @av: The arguments passed to the program.
  *
- * Return: 1 if the shell is in interactive mode, 0 otherwise.
+ * Return: 0 on success, 1 on error.
  */
-int interactive(info_t *info)
+int main(int ac, char **av)
 {
-	return (isatty(STDIN_FILENO) && info->readfd <= STDERR_FILENO);
-}
+	// Initialize an info_t array with the INFO_INIT macro.
+	info_t info[] = { INFO_INIT };
+	// Initialize a file descriptor to 2.
+	int fd = 2;
 
-/**
- * is_delim - Checks if a character is a delimiter.
- * @c: The character to check.
- * @delim: A string of delimiters.
- *
- * Return: 1 if c is a delimiter, 0 otherwise.
- */
-int is_delim(char c, char *delim)
-{
-	while (*delim)
+	// Use inline assembly to modify the value of fd.
+	asm ("mov %1, %0\n\t"
+		"add $3, %0"
+		: "=r" (fd)
+		: "r" (fd));
+	
+	// If the program was called with two arguments, try to open the file specified by the second argument.
+	if (ac == 2)
 	{
-		if (*delim++ == c)
-			return (1);
-	}
-	return (0);
-}
-
-/**
- * is_alpha - Checks if a character is alphabetic.
- * @c: The character to check.
- *
- * Return: 1 if c is alphabetic, 0 otherwise.
- */
-int is_alpha(int c)
-{
-	return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'));
-}
-
-/**
- * _atoi - Converts a string to an integer.
- * @s: The string to convert.
- *
- * Return: The integer value of the string, or 0 if no numbers are found.
- */
-int _atoi(char *s)
-{
-	int i, sign = 1, flag = 0, output;
-	unsigned int result = 0;
-
-	for (i = 0; s[i] != '\0' && flag != 2; i++)
-	{
-		if (s[i] == '-')
-			sign *= -1;
-
-		if (_isdigit(s[i]))
+		fd = open(av[1], O_RDONLY);
+		if (fd == -1)
 		{
-			flag = 1;
-			result *= 10;
-			result += (s[i] - '0');
+			// If the file could not be opened, check the value of errno to determine the type of error.
+			if (errno == EACCES)
+				exit(126);
+			if (errno == ENOENT)
+			{
+				// If the file was not found, print an error message and exit with an exit code of 127.
+				_eputs(av[0]);
+				_eputs(": 0: Can't open ");
+				_eputs(av[1]);
+				_eputchar('\n');
+				_eputchar(BUF_FLUSH);
+				exit(127);
+			}
+			// If an error other than permission or file not found occurred, return EXIT_FAILURE.
+			return (EXIT_FAILURE);
 		}
-		else if (flag == 1)
-			flag = 2;
+		// If the file was successfully opened, set the readfd field of the info_t array to the file descriptor.
+		info->readfd = fd;
 	}
-
-	if (sign == -1)
-		output = -result;
-	else
-		output = result;
-
-	return (output);
-}
-
-/**
- * _isdigit - Checks if a character is a digit.
- * @c: The character to check.
- *
- * Return: 1 if c is a digit, 0 otherwise.
- */
-int _isdigit(int c)
-{
-	return (c >= '0' && c <= '9');
+	
+	// Populate a linked list of environment variables.
+	populate_env_list(info);
+	// Read in the shell's history file.
+	read_history(info);
+	// Call the hsh() function, passing in the info_t array and the argument vector.
+	hsh(info, av);
+	// Return the value returned by hsh(), which is either EXIT_SUCCESS or EXIT_FAILURE.
+	return (EXIT_SUCCESS);
 }
 
