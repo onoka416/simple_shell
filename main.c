@@ -36,12 +36,16 @@ int main(int ac, char **av)
 				_eputchar(BUF_FLUSH);
 				exit(127);
 			}
+			/* If there are more than one argument, print an error message and exit. */
 			return (EXIT_FAILURE);
 		}
 		info->readfd = fd;
 	}
+	  /* Populate the environment list. */
 	populate_env_list(info);
 	read_history(info);
+	/* Run the shell. */
+
 	hsh(info, av);
 	return (EXIT_SUCCESS);
 }
