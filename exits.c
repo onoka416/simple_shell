@@ -1,9 +1,9 @@
 #include "shell.h"
 
 /**
- **_strncpy - copies a string
+ **The fucntion _strncpy - copies a string or strings
  *@dest: the destination string to be copied to
- *@src: the source string
+ *@src: the source string (strings)
  *@n: the amount of characters to be copied
  *Return: the concatenated string
  */
